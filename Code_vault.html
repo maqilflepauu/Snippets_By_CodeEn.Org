@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CodeVault - Developer Snippet Manager</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg-primary: #0a0e27;
+  --bg-secondary: #141b3d;
+  --bg-card: #1a2347;
+  --text-primary: #e8eaf6;
+  --text-secondary: #a5b4fc;
+  --accent-primary: #6366f1;
+  --accent-hover: #818cf8;
+  --border: #2d3561;
+  --success: #10b981;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+
+.navbar {
+  background: var(--bg-secondary);
+  border-bottom: 2px solid var(--border);
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(10px);
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #6366f1, #a5b4fc);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  letter-spacing: -0.5px;
+}
+
+.nav-btn {
+  background: var(--accent-primary);
+  color: white;
+  border: none;
+  padding: 0.625rem 1.25rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+}
+
+.nav-btn:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.hero {
+  text-align: center;
+  padding: 4rem 2rem;
+  margin-bottom: 3rem;
+}
+
+.hero h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, #6366f1, #a5b4fc);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hero p {
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.main-layout {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.sidebar {
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  padding: 1.5rem;
+  height: fit-content;
+  position: sticky;
+  top: 100px;
+}
+
+.sidebar h3 {
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.category-item {
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--text-secondary);
+}
+
+.category-item:hover {
+  background: var(--bg-card);
+  color: var(--text-primary);
+}
+
+.category-item.active {
+  background: var(--accent-primary);
+  color: white;
+}
+
+.badge {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.125rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.content-area {
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  padding: 2rem;
+}
+
+.content-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.content-header h2 {
+  font-size: 1.75rem;
+}
+
+.search-bar {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.625rem 1rem;
+  color: var(--text-primary);
+  width: 300px;
+  font-size: 0.875rem;
+}
+
+.search-bar:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+}
+
+.snippets-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+}
+
+.snippet-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: all 0.3s;
+}
+
+.snippet-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+  border-color: var(--accent-primary);
+}
+
+.snippet-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  margin-bottom: 1rem;
+}
+
+.snippet-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.snippet-tag {
+  background: var(--accent-primary);
+  color: white;
+  padding: 0.25rem 0.625rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.snippet-code {
+  background: var(--bg-primary);
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1rem 0;
+  overflow-x: auto;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  border: 1px solid var(--border);
+}
+
+.snippet-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background: var(--accent-primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: var(--accent-hover);
+}
+
+.btn-secondary {
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+
+.btn-secondary:hover {
+  background: var(--bg-card);
+  color: var(--text-primary);
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background: var(--bg-secondary);
+  border-radius: 16px;
+  padding: 2rem;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.modal-header h3 {
+  font-size: 1.5rem;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+}
+
+.close-btn:hover {
+  background: var(--bg-card);
+  color: var(--text-primary);
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.75rem;
+  color: var(--text-primary);
+  font-size: 0.875rem;
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+}
+
+.form-textarea {
+  font-family: 'Fira Code', monospace;
+  resize: vertical;
+  min-height: 150px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 2rem;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--text-secondary);
+}
+
+.empty-state svg {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+@media (max-width: 1024px) {
+  .main-layout {
+    grid-template-columns: 1fr;
+  }
+  
+  .sidebar {
+    position: relative;
+    top: 0;
+  }
+  
+  .hero h1 {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .snippets-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .search-bar {
+    width: 100%;
+    margin-top: 1rem;
+  }
+  
+  .content-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="logo">⚡ CodeVault</div>
+  <button class="nav-btn" id="newSnippetBtn">+ New Snippet</button>
+</nav>
+
+<div class="hero">
+  <h1>Your Code Snippet Library</h1>
+  <p>Store, organize, and quickly access your most-used code snippets</p>
+</div>
+
+<div class="container">
+  <div class="main-layout">
+    <aside class="sidebar">
+      <h3>Categories</h3>
+      <div id="categoryList"></div>
+    </aside>
+
+    <main class="content-area">
+      <div class="content-header">
+        <h2 id="categoryTitle">All Snippets</h2>
+        <input type="text" class="search-bar" id="searchInput" placeholder="Search snippets...">
+      </div>
+      <div class="snippets-grid" id="snippetsGrid"></div>
+    </main>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal" id="snippetModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Create New Snippet</h3>
+      <button class="close-btn" id="closeModal">×</button>
+    </div>
+    <form id="snippetForm">
+      <div class="form-group">
+        <label>Title</label>
+        <input type="text" class="form-input" id="snippetTitle" placeholder="e.g., Fetch API Example" required>
+      </div>
+      <div class="form-group">
+        <label>Category</label>
+        <select class="form-select" id="snippetCategory">
+          <option value="JavaScript">JavaScript</option>
+          <option value="HTML">HTML</option>
+          <option value="CSS">CSS</option>
+          <option value="React">React</option>
+          <option value="Node.js">Node.js</option>
+          <option value="Git">Git</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Code</label>
+        <textarea class="form-textarea" id="snippetCode" placeholder="Paste your code here..." required></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save Snippet</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+// Sample snippets
+const defaultSnippets = {
+  JavaScript: [
+    { title: 'Async/Await Fetch', code: 'async function fetchData(url) {\n  try {\n    const response = await fetch(url);\n    const data = await response.json();\n    return data;\n  } catch (error) {\n    console.error(error);\n  }\n}' },
+    { title: 'Array Map', code: 'const numbers = [1, 2, 3, 4];\nconst doubled = numbers.map(num => num * 2);\nconsole.log(doubled); // [2, 4, 6, 8]' },
+    { title: 'Event Listener', code: 'document.querySelector(\'.btn\').addEventListener(\'click\', (e) => {\n  console.log(\'Button clicked!\', e.target);\n});' }
+  ],
+  HTML: [
+    { title: 'HTML5 Boilerplate', code: '<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="UTF-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n  <title>Document</title>\n</head>\n<body>\n  \n</body>\n</html>' },
+    { title: 'Responsive Image', code: '<picture>\n  <source srcset="image-large.jpg" media="(min-width: 1024px)">\n  <source srcset="image-medium.jpg" media="(min-width: 768px)">\n  <img src="image-small.jpg" alt="Description">\n</picture>' }
+  ],
+  CSS: [
+    { title: 'Flexbox Center', code: '.container {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  min-height: 100vh;\n}' },
+    { title: 'Grid Layout', code: '.grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));\n  gap: 2rem;\n}' },
+    { title: 'Smooth Scroll', code: 'html {\n  scroll-behavior: smooth;\n}\n\n::-webkit-scrollbar {\n  width: 10px;\n}\n\n::-webkit-scrollbar-track {\n  background: #f1f1f1;\n}\n\n::-webkit-scrollbar-thumb {\n  background: #888;\n  border-radius: 5px;\n}' }
+  ],
+  React: [
+    { title: 'useState Hook', code: 'import { useState } from \'react\';\n\nfunction Counter() {\n  const [count, setCount] = useState(0);\n  \n  return (\n    <button onClick={() => setCount(count + 1)}>\n      Count: {count}\n    </button>\n  );\n}' }
+  ],
+  Git: [
+    { title: 'Git Basics', code: 'git init\ngit add .\ngit commit -m "Initial commit"\ngit branch -M main\ngit remote add origin <url>\ngit push -u origin main' },
+    { title: 'Undo Last Commit', code: '# Keep changes\ngit reset --soft HEAD~1\n\n# Discard changes\ngit reset --hard HEAD~1' }
+  ]
+};
+
+let snippets = JSON.parse(JSON.stringify(defaultSnippets));
+let currentCategory = 'All';
+let searchTerm = '';
+
+// Initialize
+function init() {
+  renderCategories();
+  renderSnippets();
+  setupEventListeners();
+}
+
+// Render categories
+function renderCategories() {
+  const categoryList = document.getElementById('categoryList');
+  const categories = ['All', ...Object.keys(snippets)];
+  
+  categoryList.innerHTML = categories.map(cat => {
+    const count = cat === 'All' 
+      ? Object.values(snippets).reduce((sum, arr) => sum + arr.length, 0)
+      : snippets[cat]?.length || 0;
+    
+    return `
+      <div class="category-item ${cat === currentCategory ? 'active' : ''}" data-category="${cat}">
+        <span>${cat}</span>
+        <span class="badge">${count}</span>
+      </div>
+    `;
+  }).join('');
+  
+  // Add click handlers
+  categoryList.querySelectorAll('.category-item').forEach(item => {
+    item.addEventListener('click', () => {
+      currentCategory = item.dataset.category;
+      renderCategories();
+      renderSnippets();
+    });
+  });
+}
+
+// Render snippets
+function renderSnippets() {
+  const grid = document.getElementById('snippetsGrid');
+  const title = document.getElementById('categoryTitle');
+  
+  title.textContent = currentCategory === 'All' ? 'All Snippets' : `${currentCategory} Snippets`;
+  
+  let allSnippets = [];
+  
+  if (currentCategory === 'All') {
+    Object.entries(snippets).forEach(([cat, items]) => {
+      items.forEach(item => allSnippets.push({ ...item, category: cat }));
+    });
+  } else {
+    allSnippets = (snippets[currentCategory] || []).map(item => ({ ...item, category: currentCategory }));
+  }
+  
+  // Filter by search
+  if (searchTerm) {
+    allSnippets = allSnippets.filter(s => 
+      s.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      s.code.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }
+  
+  if (allSnippets.length === 0) {
+    grid.innerHTML = `
+      <div class="empty-state">
+        <svg fill="currentColor" viewBox="0 0 20 20">
+          <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
+        </svg>
+        <h3>No snippets found</h3>
+        <p>Try adjusting your search or create a new snippet</p>
+      </div>
+    `;
+    return;
+  }
+  
+  grid.innerHTML = allSnippets.map((snippet, idx) => `
+    <div class="snippet-card">
+      <div class="snippet-header">
+        <div class="snippet-title">${snippet.title}</div>
+        <div class="snippet-tag">${snippet.category}</div>
+      </div>
+      <pre class="snippet-code">${escapeHtml(snippet.code)}</pre>
+      <div class="snippet-actions">
+        <button class="btn btn-primary copy-btn" data-code="${escapeHtml(snippet.code)}">Copy</button>
+        <button class="btn btn-secondary delete-btn" data-category="${snippet.category}" data-index="${idx}">Delete</button>
+      </div>
+    </div>
+  `).join('');
+  
+  // Add event listeners
+  grid.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const code = this.dataset.code;
+      navigator.clipboard.writeText(unescapeHtml(code));
+      this.textContent = '✓ Copied!';
+      setTimeout(() => this.textContent = 'Copy', 2000);
+    });
+  });
+  
+  grid.querySelectorAll('.delete-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      if (confirm('Delete this snippet?')) {
+        deleteSnippet(this.dataset.category, parseInt(this.dataset.index));
+      }
+    });
+  });
+}
+
+// Delete snippet
+function deleteSnippet(category, index) {
+  if (currentCategory === 'All') {
+    // Find and delete from actual category
+    let actualIndex = 0;
+    for (const [cat, items] of Object.entries(snippets)) {
+      for (let i = 0; i < items.length; i++) {
+        if (actualIndex === index) {
+          snippets[cat].splice(i, 1);
+          renderCategories();
+          renderSnippets();
+          return;
+        }
+        actualIndex++;
+      }
+    }
+  } else {
+    snippets[category].splice(index, 1);
+    renderCategories();
+    renderSnippets();
+  }
+}
+
+// Setup event listeners
+function setupEventListeners() {
+  const modal = document.getElementById('snippetModal');
+  const form = document.getElementById('snippetForm');
+  
+  document.getElementById('newSnippetBtn').addEventListener('click', () => {
+    modal.style.display = 'flex';
+  });
+  
+  document.getElementById('closeModal').addEventListener('click', () => {
+    modal.style.display = 'none';
+    form.reset();
+  });
+  
+  document.getElementById('cancelBtn').addEventListener('click', () => {
+    modal.style.display = 'none';
+    form.reset();
+  });
+  
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const title = document.getElementById('snippetTitle').value;
+    const category = document.getElementById('snippetCategory').value;
+    const code = document.getElementById('snippetCode').value;
+    
+    if (!snippets[category]) {
+      snippets[category] = [];
+    }
+    
+    snippets[category].push({ title, code });
+    
+    modal.style.display = 'none';
+    form.reset();
+    currentCategory = category;
+    renderCategories();
+    renderSnippets();
+  });
+  
+  document.getElementById('searchInput').addEventListener('input', (e) => {
+    searchTerm = e.target.value;
+    renderSnippets();
+  });
+  
+  // Close modal on outside click
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      modal.style.display = 'none';
+      form.reset();
+    }
+  });
+}
+
+// Utility functions
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function unescapeHtml(text) {
+  const div = document.createElement('div');
+  div.innerHTML = text;
+  return div.textContent;
+}
+
+// Initialize app
+init();
+</script>
+
+</body>
+</html>
